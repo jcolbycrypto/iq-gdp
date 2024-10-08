@@ -19,7 +19,7 @@ st.sidebar.header("Filter Options")
 @st.cache_data
 def get_gdp_data():
     # URL for GDP per capita data from the IMF API
-    url = "https://api.imf.org/datamapper/NGDPDPC@WEO/OEMDC/ADVEC/WEOWORLD"
+    url = "https://www.imf.org/external/datamapper/api/v1/NGDPDPC@WEO/OEMDC/ADVEC/WEOWORLD"
     
     # Make the request to the IMF API
     response = requests.get(url)
