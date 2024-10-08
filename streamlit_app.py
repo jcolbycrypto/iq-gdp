@@ -7,14 +7,14 @@ st.title("Relationship Between GDP per Capita and Average IQ by Country")
 
 # Add a brief description
 st.markdown("""
-This app visualizes the relationship between a country's GDP per capita and its average IQ. 
+This app visualizes the relationship between a country's GDP per capita (for a specific year or an average over years) and its average IQ.
 Use the sidebar to filter data and explore the correlation.
 """)
 
 # Sidebar for file upload
 st.sidebar.header("Upload Data Files")
 
-# Upload CSV file for GDP and IQ data
+# Upload CSV file
 uploaded_file = st.sidebar.file_uploader("Upload your CSV with GDP per Capita and Average IQ data", type=["csv"])
 
 if uploaded_file is not None:
@@ -23,11 +23,24 @@ if uploaded_file is not None:
         data = pd.read_csv(uploaded_file)
         st.success("Data successfully loaded!")
         
-        # Check the first few rows of the uploaded data
+        # Display a preview of the uploaded data
         st.write("Here's a preview of your data:")
         st.dataframe(data.head())
-        
-        # Assuming the uploaded CSV has columns "Country", "GDP_per_Capita", "Average_IQ", and "Region"
+
+        # Extract year columns (assuming they are numerical)
+        year_columns = [col for col in data.columns if col.isdigit()]
+        st.sidebar.subheader("Select Year or Aggregate")
+
+        # Option to select a specific year or take an average
+        selected_year = st.sidebar.selectbox("Select a Year", year_columns)
+        aggregate = st.sidebar.checkbox("Use Average GDP over all years", value=False)
+
+        if aggregate:
+            data['GDP_per_Capita'] = data[year_columns].mean(axis=1)  # Calculate average GDP across years
+        else:
+            data['GDP_per_Capita'] = data[selected_year]  # Select GDP for the specific year
+
+        # Check if necessary columns exist
         if 'Country' in data.columns and 'GDP_per_Capita' in data.columns and 'Average_IQ' in data.columns and 'Region' in data.columns:
             # Slider to filter GDP per capita
             min_gdp = int(data['GDP_per_Capita'].min())
